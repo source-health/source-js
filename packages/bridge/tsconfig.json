@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "exclude": ["node_modules"],
+  "include": ["./src/**/*.ts", "./src/**/*.tsx", "./generated/**/*.ts"],
+  "compilerOptions": {
+    "module": "es2020",
+    "outDir": "build/esm",
+    "declaration": true
+  }
+}

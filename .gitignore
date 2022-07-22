@@ -1,0 +1,14 @@
+**/node_modules
+**/.next
+**/out
+**/.DS_Store
+**/dist
+**/build
+*.tmp
+.eslintcache
+yarn-error.log
+/tmp/
+jest-*.xml
+**/test-results
+**/generated
+

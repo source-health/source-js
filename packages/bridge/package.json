@@ -1,0 +1,30 @@
+{
+  "name": "@source-health/js-bridge",
+  "version": "0.2.1",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "build/esm/index.d.ts",
+  "description": "Zero-dependency typescript library for cross-frame communication",
+  "private": false,
+  "scripts": {
+    "build:esm": "tsc --project tsconfig.json",
+    "build:cjs": "tsc --project tsconfig.cjs.json",
+    "build": "yarn build:esm && yarn build:cjs",
+    "check:lint": "eslint src/",
+    "generate:queries": "graphql-codegen --config codegen.yml"
+  },
+  "files": [
+    "src/**/*",
+    "build/**/*.js",
+    "build/**/*.js.map",
+    "build/**/*.d.ts"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.3.2",
+    "rollup": "^2.72.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "tslib": "^2.4.0"
+  }
+}
