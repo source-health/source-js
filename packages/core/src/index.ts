@@ -1,2 +1,7 @@
 export * from './Source'
 export * from './environment'
+export * from './authentication/NoopAuthentication'
+export * from './authentication/StaticAuthentication'
+export * from './authentication/Authentication'
+export * from './elements/SourceElement'
+export * from './elements/BookingElement'

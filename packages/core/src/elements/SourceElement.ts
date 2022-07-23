@@ -1,9 +1,8 @@
-import { Host, FrameChannel } from '@source-health/js-bridge'
+import { Bridge, WindowChannel } from '@source-health/js-bridge'
 
 import type { Source } from '../Source'
 import { createConnectEndpoint } from '../endpoints'
 import { selectorToNode } from '../utils/dom'
-import { generateId } from '../utils/random'
 import type { BaseElementEvents, Listener } from '../utils/types'
 
 enum MountStatus {
@@ -33,43 +32,23 @@ export class SourceElement<
   TOptions = unknown,
   TEvents extends BaseElementEvents = BaseElementEvents,
 > {
-  /**
-   * Unique identifier for this element instance
-   */
-  private readonly identifier: string
-
-  /**
-   * Source instance on which this element is bound
-   */
+  /* @internal source instance to which we are attached */
   private readonly source: Source
 
-  /**
-   * Configuration for the particular element
-   */
+  /* @internal static configuration for the element */
   private readonly configuration: ElementConfiguration
 
-  /**
-   * Listeners that are mounted to this element
-   */
-  private readonly listeners: Record<string, Listener<any>[]> = {}
-
-  /**
-   * Latest updated options for the element
-   */
+  /* @internal last known options for the element */
   private options: TOptions
 
-  /**
-   * Mount status for the element
-   */
+  /* @internal current status of the element */
   private status: MountStatus = MountStatus.Unmounted
 
-  /**
-   * Pointer to the frame element
-   */
+  /* @internal guest iframe element */
   private frameEl: HTMLIFrameElement | null = null
 
-  //
-  private bridge: Host | null = null
+  /* @internal bridge instance */
+  private bridge: Bridge | null = null
 
   /**
    * Create a new Element instance
@@ -78,8 +57,11 @@ export class SourceElement<
    * @param configuration
    * @param options
    */
-  constructor(source: Source, options: TOptions, configuration: ElementConfiguration) {
-    this.identifier = generateId(32)
+  constructor(
+    source: Source,
+    options: TOptions,
+    configuration: ElementConfiguration,
+  ) {
     this.source = source
     this.configuration = configuration
     this.options = options
@@ -103,28 +85,46 @@ export class SourceElement<
       throw new Error(`Selector ${container} did not resolve to any node`)
     }
 
-    // Register message listeners
-    window.addEventListener('message', this.handleMessageEvent)
-
     // Update the mount status
-    const frame = this.createFrame()
+    const url = this.createUrl()
+    const frame = this.createFrame(url)
     this.status = MountStatus.Mounting
     this.frameEl = frame
-    this.frameEl.setAttribute('scrolling', 'no')
-    this.frameEl.style.overflow = 'hidden'
 
     // Append the frame to our container
     node.appendChild(frame)
 
+    // Ensure we have a content window
+    const contentWindow = frame.contentWindow
+    if (!contentWindow) {
+      throw new Error(
+        'Expected contentWindow to be available after mounting element',
+      )
+    }
+
+    // Create the communication channel
+    const channel = new WindowChannel({
+      localWindow: this.configuration.window,
+      remoteWindow: contentWindow,
+      expectedOrigin: url.origin,
+    })
+
     // Now that the frame is appended to the DOM, we can create out bridge and initiate our
     // handshake process
-    this.bridge = Host.frame(new FrameChannel(window, frame.contentWindow!), {
-      updateFrameStyle: (args: number) => {
-        frame.style.height = `${args}px`
+    this.bridge = Bridge.host(channel, {
+      methods: {
+        token: () => this.source.getToken(),
+        updateFrameStyle: (args: number) => {
+          frame.style.height = `${args}px`
+        },
       },
     })
 
-    this.bridge.handshake()
+    this.bridge.connect()
+
+    this.bridge.on('connected', () => {
+      this.status = MountStatus.Mounted
+    })
   }
 
   /**
@@ -136,13 +136,10 @@ export class SourceElement<
     }
 
     // Remove the frame from its parent
-    this.bridge?.destroy()
+    this.bridge?.close()
     this.frameEl?.parentNode?.removeChild(this.frameEl)
     this.frameEl = null
     this.status = MountStatus.Unmounted
-
-    // Remove event listeners that are no longer needed
-    window.removeEventListener('message', this.handleMessageEvent)
   }
 
   /**
@@ -155,6 +152,7 @@ export class SourceElement<
    */
   public update(options: TOptions): void {
     this.options = options
+    this.bridge?.broadcast('configUpdated', options)
   }
 
   /**
@@ -164,7 +162,10 @@ export class SourceElement<
    * @param handler callback function to be invoked when the event is triggered
    * @returns the element instance, for chaining
    */
-  public on<K extends keyof TEvents>(event: K & string, handler: Listener<TEvents[K]>): this {
+  public on<K extends keyof TEvents>(
+    event: K & string,
+    handler: Listener<TEvents[K]>,
+  ): void {
     this.bridge?.on(event, handler)
   }
 
@@ -175,22 +176,29 @@ export class SourceElement<
    * @param handler callback function to be invoked when the event is triggered
    * @returns the element instance, for chaining
    */
-  public off<K extends keyof TEvents>(event: K & string, handler: Listener<TEvents[K]>): this {
+  public off<K extends keyof TEvents>(
+    event: K & string,
+    handler: Listener<TEvents[K]>,
+  ): void {
     this.bridge?.off(event, handler)
   }
 
-  private createFrame(): HTMLIFrameElement {
-    const url = createConnectEndpoint(this.source.getEnvironment(), this.configuration.path)
-    url.searchParams.append('mode', 'embed')
-
+  /* @internal */
+  private createFrame(url: URL): HTMLIFrameElement {
     const frame = document.createElement('iframe')
+    frame.style.overflow = 'hidden'
     frame.setAttribute('src', url.toString())
+    frame.setAttribute('scrolling', 'no')
+
     return frame
   }
 
-  //
-  // Event Handlers
-  //
-
-  private handleMessageEvent = async (event: MessageEvent) => {}
+  private createUrl(): URL {
+    const url = createConnectEndpoint(
+      this.source.getEnvironment(),
+      this.configuration.path,
+    )
+    url.searchParams.append('mode', 'embed')
+    return url
+  }
 }

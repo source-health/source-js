@@ -7,10 +7,10 @@ export interface Channel {
    * Channel interfaces can take any JSON serializable object to transmit over the
    * bridge. Serialization and deserialization is handled transparently by the channel.
    */
-  emit(message: unknown): void
+  postMessage(message: unknown): void
 
   /**
    * Listens to messages sent over a channel
    */
-  listen(callback: Callback<MessageEvent>): Unsubscribe
+  addMessageListener(callback: Callback<MessageEvent>): Unsubscribe
 }

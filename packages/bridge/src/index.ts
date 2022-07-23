@@ -1,3 +1,3 @@
-export * from './Host'
-export * from './Guest'
-export * from './channel/FrameChannel'
+export * from './Bridge'
+export * from './channel/WindowChannel'
+export * from './emitter/Emitter'

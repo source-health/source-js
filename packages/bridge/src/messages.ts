@@ -4,6 +4,7 @@ import { MARKER } from './common'
 export enum MessageType {
   HandshakeRequest = 'handshake-request',
   HandshakeResponse = 'handshake-response',
+  HandshakeAck = 'handshake-ack',
   Call = 'call',
   Response = 'response',
   Error = 'error',
@@ -20,7 +21,10 @@ export type HandshakeRequestMessage = Message<MessageType.HandshakeRequest>
 
 export type HandshakeResponseMessage = Message<MessageType.HandshakeResponse>
 
-export interface CallMessage<A extends Array<any> = []> extends Message<MessageType.Call> {
+export type HandshakeAckMessage = Message<MessageType.HandshakeAck>
+
+export interface CallMessage<A extends Array<any> = []>
+  extends Message<MessageType.Call> {
   requestId: IdType
   methodName: KeyType
   args: A
@@ -39,7 +43,9 @@ export interface EventMessage<P> extends Message<MessageType.Event> {
 
 // Message Creators
 
-export function createHandshakeRequestMessage(sessionId: IdType): HandshakeRequestMessage {
+export function createHandshakeRequestMessage(
+  sessionId: IdType,
+): HandshakeRequestMessage {
   return {
     type: MARKER,
     action: MessageType.HandshakeRequest,
@@ -47,10 +53,22 @@ export function createHandshakeRequestMessage(sessionId: IdType): HandshakeReque
   }
 }
 
-export function createHandshakeResponseMessage(sessionId: IdType): HandshakeResponseMessage {
+export function createHandshakeResponseMessage(
+  sessionId: IdType,
+): HandshakeResponseMessage {
   return {
     type: MARKER,
     action: MessageType.HandshakeResponse,
+    sessionId,
+  }
+}
+
+export function createHandshakeAckMessage(
+  sessionId: IdType,
+): HandshakeAckMessage {
+  return {
+    type: MARKER,
+    action: MessageType.HandshakeAck,
     sessionId,
   }
 }
@@ -115,12 +133,22 @@ export function isMessage(m: any): m is Message<any> {
   return m && m.type === MARKER
 }
 
-export function isHandshakeRequestMessage(m: Message<any>): m is HandshakeRequestMessage {
+export function isHandshakeRequestMessage(
+  m: Message<any>,
+): m is HandshakeRequestMessage {
   return isMessage(m) && m.action === MessageType.HandshakeRequest
 }
 
-export function isHandshakeResponseMessage(m: Message<any>): m is HandshakeResponseMessage {
+export function isHandshakeResponseMessage(
+  m: Message<any>,
+): m is HandshakeResponseMessage {
   return isMessage(m) && m.action === MessageType.HandshakeResponse
+}
+
+export function isHandshakeAckMessage(
+  m: Message<any>,
+): m is HandshakeAckMessage {
+  return isMessage(m) && m.action === MessageType.HandshakeAck
 }
 
 export function isCallMessage(m: Message<any>): m is CallMessage<any[]> {

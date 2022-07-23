@@ -1,6 +1,8 @@
-import type { EventsType } from './common'
+import type { EventsType } from '../common'
 
-export class Emitter<E extends EventsType> {
+import type { Emitter } from './Emitter'
+
+export class BaseEmitter<E extends EventsType> implements Emitter<E> {
   private _listeners: Partial<Record<keyof E, Set<(data: any) => void>>>
 
   constructor() {
@@ -8,10 +10,7 @@ export class Emitter<E extends EventsType> {
   }
 
   /**
-   * Add a listener to a specific event.
-   *
-   * @param eventName - The name of the event
-   * @param listener - A listener function that takes as parameter the payload of the event
+   * @inheritdoc
    */
   public on<K extends keyof E>(eventName: K, listener: (data: E[K]) => void) {
     let listeners = this._listeners[eventName]
@@ -25,10 +24,7 @@ export class Emitter<E extends EventsType> {
   }
 
   /**
-   * Remove a listener from a specific event.
-   *
-   * @param eventName - The name of the event
-   * @param listener - A listener function that had been added previously
+   * @inheritdoc
    */
   public off<K extends keyof E>(eventName: K, listener: (data: E[K]) => void) {
     const listeners = this._listeners[eventName]
@@ -41,14 +37,7 @@ export class Emitter<E extends EventsType> {
   }
 
   /**
-   * Add a listener to a specific event, that will only be invoked once
-   *
-   * @remarks
-   *
-   * After the first occurrence of the specified event, the listener will be invoked and
-   * immediately removed.
-   *
-   * @param eventName - The name of the event
+   * @inheritdoc
    */
   public once<K extends keyof E>(eventName: K): Promise<E[K]> {
     return new Promise((resolve) => {
@@ -62,7 +51,7 @@ export class Emitter<E extends EventsType> {
   }
 
   /** @internal */
-  emit<K extends keyof E>(eventName: K, data: E[K]) {
+  protected emit<K extends keyof E>(eventName: K, data?: E[K]) {
     const listeners = this._listeners[eventName]
 
     if (!listeners) {

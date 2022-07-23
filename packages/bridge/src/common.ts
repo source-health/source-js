@@ -1,33 +1,13 @@
 export const MARKER = '@bridge'
 
-export enum LinkStatus {
-  Unlinked,
-  Handshake,
-  Linked,
+export enum BridgeStatus {
+  Idle = 'idle',
+  Connecting = 'connecting',
+  Connected = 'connected',
 }
 
 export type IdType = number
 export type KeyType = string
-
-/**
- * The options that can be passed when calling a method on the other context with RemoteHandle.customCall()
- *
- * @public
- *
- */
-export type CallOptions = {
-  transfer?: Transferable[]
-}
-
-/**
- * The options that can be passed when emitting an event to the other context with LocalHandle.emit()
- *
- * @public
- *
- */
-export type EmitOptions = {
-  transfer?: Transferable[]
-}
 
 /**
  * @internal
@@ -62,7 +42,16 @@ export type ValueOrPromise<T> = T | Promise<T>
 /**
  * @internal
  */
-export type InnerType<T extends ValueOrPromise<any>> = T extends Promise<infer U> ? U : T
+export type InnerType<T extends ValueOrPromise<any>> = T extends Promise<
+  infer U
+>
+  ? U
+  : T
+
+/**
+ * @internal
+ */
+export type PromisePair<T = any> = [Callback<T>, Callback<unknown>]
 
 export function createUniqueIdFn() {
   let __id = 0
