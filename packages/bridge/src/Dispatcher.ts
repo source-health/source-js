@@ -101,7 +101,13 @@ export class Dispatcher extends BaseEmitter<DispatcherEvents> {
         name: error.name,
         message: error.message,
       }
+    } else if (error) {
+      error = {
+        name: 'BridgeError',
+        message: String(error),
+      }
     }
+
     const message = createResponseMessage(sessionId, requestId, value, error)
     this.channel.postMessage(message)
   }

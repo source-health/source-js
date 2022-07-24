@@ -1,3 +1,6 @@
 export * from './Bridge'
 export * from './channel/WindowChannel'
+export * from './channel/DebugChannel'
 export * from './emitter/Emitter'
+export * from './emitter/BaseEmitter'
+export { BridgeStatus } from './common'

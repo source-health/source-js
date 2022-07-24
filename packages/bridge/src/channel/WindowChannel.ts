@@ -21,17 +21,25 @@ export interface WindowChannelOptions {
    * to this channel.
    */
   expectedOrigin?: string
+
+  /**
+   * Used for testing in JSDOM environments, we can bypass checking the *source* (i.e. the window object)
+   * of an incoming message.
+   */
+  disableSourceCheck?: boolean
 }
 
 export class WindowChannel implements Channel {
   private readonly localWindow: Window
   private readonly remoteWindow: Window
   private readonly expectedOrigin: string
+  private readonly disableSourceCheck: boolean
 
   constructor(options: WindowChannelOptions) {
-    this.localWindow = options.localWindow ?? window
+    this.localWindow = options.localWindow ?? globalThis.window
     this.remoteWindow = options.remoteWindow
     this.expectedOrigin = options.expectedOrigin ?? '*'
+    this.disableSourceCheck = options.disableSourceCheck ?? false
   }
 
   public postMessage(message: unknown): void {
@@ -46,6 +54,7 @@ export class WindowChannel implements Channel {
         event,
         this.remoteWindow,
         this.expectedOrigin,
+        this.disableSourceCheck,
       )
 
       if (!isMessageAcceptable) {

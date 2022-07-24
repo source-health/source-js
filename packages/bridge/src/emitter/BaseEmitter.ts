@@ -2,7 +2,9 @@ import type { EventsType } from '../common'
 
 import type { Emitter } from './Emitter'
 
-export class BaseEmitter<E extends EventsType> implements Emitter<E> {
+export class BaseEmitter<E extends EventsType = EventsType>
+  implements Emitter<E>
+{
   private _listeners: Partial<Record<keyof E, Set<(data: any) => void>>>
 
   constructor() {

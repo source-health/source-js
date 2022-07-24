@@ -1,9 +1,5 @@
 import type { Callable } from './common'
 
-export function generateId(): string {
-  return Math.random().toString(32)
-}
-
 /**
  * Create a logger function with a specific namespace
  *
@@ -20,14 +16,26 @@ export function debug(namespace: string, log?: (...data: any[]) => void) {
   }
 }
 
+/**
+ * Determines if a message is an accepable message (i.e. passes security checks)
+ *
+ * It compares the source against the remote window from which we're expecting a message, and evaluates that the
+ * origin matches our expectations as well.
+ *
+ * @param event the message event that was received
+ * @param remoteWindow the window from which we expect the message to originate
+ * @param acceptedOrigin the accepted message origin (you may pass * to allow all messages)
+ * @returns
+ */
 export function isAcceptableMessageEvent(
   event: MessageEvent,
   remoteWindow: Window,
   acceptedOrigin: string,
+  disableSourceCheck = false,
 ) {
   const { source, origin } = event
 
-  if (source !== remoteWindow) {
+  if (!disableSourceCheck && source !== remoteWindow) {
     return false
   }
 

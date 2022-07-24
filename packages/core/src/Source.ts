@@ -1,39 +1,26 @@
-import type { Authentication } from './authentication/Authentication'
+import type { SourceConfigurationOptions } from './SourceConfiguration'
+import { SourceConfiguration } from './SourceConfiguration'
 import { NoopAuthentication } from './authentication/NoopAuthentication'
 import type { BookingOptions } from './elements/BookingElement'
 import { BookingElement } from './elements/BookingElement'
 import type { SourceElement } from './elements/SourceElement'
-import { SourceEnvironment } from './environment'
-
-export interface SourceOptions {
-  /**
-   * Environment in which the Source client is running
-   */
-  environment?: SourceEnvironment
-
-  /**
-   * Authentication for this Source instance
-   */
-  authentication?: Authentication
-}
 
 export class Source {
   /**
    * Authentication instance used when making API calls
    */
-  private authentication: Authentication
+  private readonly configuration: SourceConfiguration
 
   /**
-   * Environment in which Source will be running
+   * Constructor
    */
-  private environment: SourceEnvironment
-
-  /**
-   *
-   */
-  constructor(readonly options: SourceOptions) {
-    this.authentication = options.authentication ?? new NoopAuthentication()
-    this.environment = options.environment ?? SourceEnvironment.Production
+  constructor(options: Partial<SourceConfigurationOptions>) {
+    this.configuration = new SourceConfiguration({
+      endpoint: options.endpoint ?? 'https://api.sourcehealth.com',
+      domain: options.domain ?? 'https://embed.connect.sourcehealth.com',
+      authentication: options.authentication ?? new NoopAuthentication(),
+      appearance: options.appearance,
+    })
   }
 
   /**
@@ -41,24 +28,27 @@ export class Source {
    *
    * Elements will not do anything until they're mounted. Once an element is mounted,
    * it will not be cleaned up properly until it's unmounted.
+   *
+   * @param type the element to create
+   * @param options the options for the created element
    */
   public element(type: 'booking', options: BookingOptions): BookingElement
   public element(type: 'booking', options: unknown): SourceElement {
     if (type === 'booking') {
-      return new BookingElement(this, options as BookingOptions)
+      return new BookingElement(this.configuration, options as BookingOptions)
     } else {
       throw new Error(`Unrecognized element type: ${type}`)
     }
   }
 
   /**
-   * Returns the current environment
+   * Update the configuration for the Source instance
+   *
+   * @param options the options to provide to all elements
    */
-  public getEnvironment(): SourceEnvironment {
-    return this.environment
-  }
-
-  public getToken(): Promise<string | null> {
-    return this.authentication.token()
+  public update(
+    options: Partial<Pick<SourceConfigurationOptions, 'appearance'>>,
+  ) {
+    this.configuration.update(options)
   }
 }

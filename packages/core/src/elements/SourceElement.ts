@@ -1,6 +1,9 @@
-import { Bridge, WindowChannel } from '@source-health/js-bridge'
+import { Bridge, DebugChannel, WindowChannel } from '@source-health/js-bridge'
 
-import type { Source } from '../Source'
+import type {
+  SourceConfiguration,
+  SourceConfigurationOptions,
+} from '../SourceConfiguration'
 import { createConnectEndpoint } from '../endpoints'
 import { selectorToNode } from '../utils/dom'
 import type { BaseElementEvents, Listener } from '../utils/types'
@@ -33,7 +36,7 @@ export class SourceElement<
   TEvents extends BaseElementEvents = BaseElementEvents,
 > {
   /* @internal source instance to which we are attached */
-  private readonly source: Source
+  private readonly source: SourceConfiguration
 
   /* @internal static configuration for the element */
   private readonly configuration: ElementConfiguration
@@ -58,7 +61,7 @@ export class SourceElement<
    * @param options
    */
   constructor(
-    source: Source,
+    source: SourceConfiguration,
     options: TOptions,
     configuration: ElementConfiguration,
   ) {
@@ -103,28 +106,35 @@ export class SourceElement<
     }
 
     // Create the communication channel
-    const channel = new WindowChannel({
-      localWindow: this.configuration.window,
-      remoteWindow: contentWindow,
-      expectedOrigin: url.origin,
-    })
+    const channel = new DebugChannel(
+      new WindowChannel({
+        localWindow: this.configuration.window,
+        remoteWindow: contentWindow,
+        expectedOrigin: url.origin,
+      }),
+    )
 
     // Now that the frame is appended to the DOM, we can create out bridge and initiate our
     // handshake process
     this.bridge = Bridge.host(channel, {
       methods: {
+        appearance: () => this.source.getAppearance(),
         token: () => this.source.getToken(),
-        updateFrameStyle: (args: number) => {
-          frame.style.height = `${args}px`
+        options: () => this.options,
+        updateFrameStyle: (dimensions: Partial<DOMRect>) => {
+          if (dimensions.height) {
+            frame.style.height = `${dimensions.height}px`
+          }
         },
       },
     })
 
     this.bridge.connect()
-
     this.bridge.on('connected', () => {
       this.status = MountStatus.Mounted
     })
+
+    this.source.on('updated', this.handleSourceUpdate)
   }
 
   /**
@@ -152,7 +162,7 @@ export class SourceElement<
    */
   public update(options: TOptions): void {
     this.options = options
-    this.bridge?.broadcast('configUpdated', options)
+    this.bridge?.broadcast('updatedOptions', options)
   }
 
   /**
@@ -186,19 +196,39 @@ export class SourceElement<
   /* @internal */
   private createFrame(url: URL): HTMLIFrameElement {
     const frame = document.createElement('iframe')
-    frame.style.overflow = 'hidden'
     frame.setAttribute('src', url.toString())
     frame.setAttribute('scrolling', 'no')
+    frame.setAttribute(
+      'style',
+      [
+        'height: 40px',
+        'overflow: hidden',
+        'transition: height 0.35s ease 0s, opacity 0.4s ease 0.1s',
+        'border: none !important',
+        'padding: 0px !important',
+        'user-select: none !important',
+        'overflow: hidden !important',
+        'width: 100% !important',
+      ].join('; '),
+    )
 
     return frame
   }
 
   private createUrl(): URL {
     const url = createConnectEndpoint(
-      this.source.getEnvironment(),
+      this.source.getDomain(),
       this.configuration.path,
     )
     url.searchParams.append('mode', 'embed')
     return url
+  }
+
+  private handleSourceUpdate = (
+    config: Pick<SourceConfigurationOptions, 'appearance'>,
+  ) => {
+    this.bridge?.broadcast('updatedConfig', {
+      appearance: config.appearance,
+    })
   }
 }

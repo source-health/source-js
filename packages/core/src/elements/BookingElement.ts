@@ -1,4 +1,4 @@
-import type { Source } from '../Source'
+import type { SourceConfiguration } from '../SourceConfiguration'
 import type { BaseElementEvents } from '../utils/types'
 
 import { SourceElement } from './SourceElement'
@@ -17,8 +17,11 @@ export interface BookingOptions {
   appointmentType: string
 }
 
-export class BookingElement extends SourceElement<BookingOptions, BookingEvents> {
-  constructor(source: Source, options: BookingOptions) {
+export class BookingElement extends SourceElement<
+  BookingOptions,
+  BookingEvents
+> {
+  constructor(source: SourceConfiguration, options: BookingOptions) {
     super(source, options, { path: '/book', element: 'book' })
   }
 }

@@ -23,4 +23,17 @@ export class BridgeError extends Error {
   static closed(): Error {
     return new BridgeError('Bridge has been closed')
   }
+
+  static notStarted(): Error {
+    return new BridgeError('Bridge connection has not been started')
+  }
+
+  static remoteError(
+    name = 'BridgeError',
+    message = 'An unknown error has occurred',
+  ): Error {
+    const error = new BridgeError(message)
+    error.name = name
+    return error
+  }
 }

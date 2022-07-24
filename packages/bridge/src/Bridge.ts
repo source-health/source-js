@@ -109,8 +109,8 @@ export class Bridge<
 
     this.connectionPromise = connectionPromise
     this.closeCancelation = cancelationToken
-    this.dispatcher.open()
     this.updateStatus(BridgeStatus.Connecting)
+    this.dispatcher.open()
 
     if (this.role === BridgeRole.Guest) {
       this.dispatcher.handshakeRequest(++this.currentSessionId)
@@ -127,11 +127,10 @@ export class Bridge<
    * Note that the host *must* be in an open status in order for this connection reattempt to work.
    */
   public close(): void {
-    this.connectionPromise = null
     this.closeCancelation?.cancel()
-
     this.dispatcher.close()
     this.updateStatus(BridgeStatus.Idle)
+    this.connectionPromise = null
   }
 
   /**
@@ -204,6 +203,7 @@ export class Bridge<
   private updateStatus(status: BridgeStatus) {
     this.status = status
 
+    this.emit('status', status as any)
     if (this.status === BridgeStatus.Connected) {
       this.emit('connected')
     }
@@ -217,7 +217,6 @@ export class Bridge<
       return
     }
 
-    console.log('got handshake request', message.sessionId)
     this.dispatcher.handshakeResponse(message.sessionId)
     this.updateStatus(BridgeStatus.Connecting)
   }
@@ -242,12 +241,11 @@ export class Bridge<
       this.role !== BridgeRole.Guest ||
       message.sessionId !== this.currentSessionId
     ) {
-      console.log('not acking')
       return
     }
 
-    this.updateStatus(BridgeStatus.Connected)
     this.dispatcher.handshakeAck(message.sessionId)
+    this.updateStatus(BridgeStatus.Connected)
   }
 
   /**
@@ -265,7 +263,9 @@ export class Bridge<
     delete this.pendingCalls[message.requestId]
 
     if (message.error) {
-      reject(message.error)
+      reject(
+        BridgeError.remoteError(message.error?.name, message.error?.message),
+      )
     } else {
       resolve(message.result)
     }

@@ -33,7 +33,7 @@ export interface CallMessage<A extends Array<any> = []>
 export interface ResponseMessage<R> extends Message<MessageType.Response> {
   requestId: IdType
   result?: R
-  error?: string
+  error?: any
 }
 
 export interface EventMessage<P> extends Message<MessageType.Event> {
