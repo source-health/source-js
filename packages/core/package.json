@@ -1,6 +1,6 @@
 {
   "name": "@source-health/js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "description": "TypeScript SDK for building modern, Source-powered patient experiences",
   "private": false,
@@ -25,7 +25,7 @@
     "build/**/*.d.ts"
   ],
   "dependencies": {
-    "@source-health/js-bridge": "*"
+    "@source-health/js-bridge": "^0.1.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.18.9",

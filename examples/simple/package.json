@@ -14,7 +14,7 @@
     "@chakra-ui/react": "^2.1.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@source-health/js": "*",
+    "@source-health/js": "^0.1.1",
     "date-fns": "^2.28.0",
     "framer-motion": "^6",
     "next": "12.1.5",
