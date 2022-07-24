@@ -12,5 +12,8 @@
     "**/__tests__/**",
     "**/__mocks__/**",
     "**/__testfixtures__/**"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
