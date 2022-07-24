@@ -1,15 +1,17 @@
-import { ChakraProvider, Stack, Button, Box } from '@chakra-ui/react'
+import { Button, ChakraProvider, Stack } from '@chakra-ui/react'
 import type { BookingElement } from '@source-health/js'
-import {
-  Source,
-  SourceEnvironment,
-  StaticAuthentication,
-} from '@source-health/js'
+import { Source, StaticAuthentication } from '@source-health/js'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 const source = new Source({
-  environment: SourceEnvironment.Staging,
-  authentication: new StaticAuthentication('asdf'),
+  domain: 'http://localhost:3002',
+  authentication: new StaticAuthentication(''),
+  appearance: {
+    variables: {
+      colorSurface: '#f9f7fa',
+      colorPrimary: 'green',
+    },
+  },
 })
 
 export default function Home() {
@@ -21,15 +23,24 @@ export default function Home() {
       return
     }
 
-    const sourceEl = source.element('booking', { appointmentType: ' ' })
+    const sourceEl = source.element('booking', {
+      appointmentType: 'intake_consult',
+    })
     sourceEl.mount(containerRef.current)
+    sourceEl.on('ready', () => {
+      console.log('element is ready')
+    })
+
+    sourceEl.on('booked', (evt) => {
+      console.log(evt)
+    })
 
     setElement(sourceEl)
 
     return () => sourceEl.unmount()
   }, [])
 
-  const onClick = useCallback(
+  const updateOptions = useCallback(
     (appointmentType: string) => {
       element?.update({
         appointmentType,
@@ -38,15 +49,35 @@ export default function Home() {
     [element],
   )
 
+  const updateAppearance = useCallback((primaryColor: string) => {
+    source.update({
+      appearance: {
+        variables: {
+          colorPrimary: primaryColor,
+        },
+      },
+    })
+  }, [])
+
   return (
     <ChakraProvider>
-      <Stack direction="column" flex="1" spacing={6} alignItems="center">
-        <Button onClick={() => onClick('intake')}>Intake Visit</Button>
-        <Button onClick={() => onClick('check in')}>Check In Visit</Button>
+      <Stack>
+        <Stack direction="row" flex="1" spacing={2} alignItems="center">
+          <Button onClick={() => updateOptions('intake_consult')}>
+            Intake Visit
+          </Button>
+          <Button onClick={() => updateOptions('check_in_visit')}>
+            Check In Visit
+          </Button>
+        </Stack>
+        <Stack direction="row" flex="1" spacing={2} alignItems="center">
+          <Button onClick={() => updateAppearance('black')}>Black</Button>
+          <Button onClick={() => updateAppearance('green')}>Green</Button>
+        </Stack>
       </Stack>
-      <Box border="1px">
-        <div ref={containerRef} />
-      </Box>
+      <br />
+      <br />
+      <div ref={containerRef} />
     </ChakraProvider>
   )
 }
