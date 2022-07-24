@@ -1,4 +1,4 @@
-import { Bridge, DebugChannel, WindowChannel } from '@source-health/js-bridge'
+import { Bridge, WindowChannel } from '@source-health/js-bridge'
 
 import type {
   SourceConfiguration,
@@ -106,13 +106,11 @@ export class SourceElement<
     }
 
     // Create the communication channel
-    const channel = new DebugChannel(
-      new WindowChannel({
-        localWindow: this.configuration.window,
-        remoteWindow: contentWindow,
-        expectedOrigin: url.origin,
-      }),
-    )
+    const channel = new WindowChannel({
+      localWindow: this.configuration.window,
+      remoteWindow: contentWindow,
+      expectedOrigin: url.origin,
+    })
 
     // Now that the frame is appended to the DOM, we can create out bridge and initiate our
     // handshake process
