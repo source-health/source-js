@@ -1,13 +1,19 @@
 {
-  "name": "@source-health/js",
+  "name": "@source-health/source-js",
   "version": "1.0.0-alpha.0",
   "license": "MIT",
   "description": "TypeScript SDK for building modern, Source-powered patient experiences",
   "private": false,
   "main": "./dist/index.js",
   "exports": {
-    "import": "./dist/index.esnext.mjs",
-    "require": "./dist/index.js"
+    ".": {
+      "import": "./dist/index.esnext.mjs",
+      "require": "./dist/index.js"
+    },
+    "./server": {
+      "import": "./dist/server.mjs",
+      "require": "./dist/server.js"
+    }
   },
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

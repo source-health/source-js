@@ -21,7 +21,7 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@source-health/js": ["../../packages/core/src"],
+      "@source-health/source-js/*": ["../../packages/core/src/*"],
       "@source-health/js-bridge": ["../../packages/bridge/src"]
     }
   },

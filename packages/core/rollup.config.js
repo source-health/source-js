@@ -13,41 +13,67 @@ function applyTerser(outputs) {
   ])
 }
 
-export default {
-  input: 'src/index.ts',
-  output: applyTerser([
-    // ES Module, straight TS to JS compilation
-    {
-      file: 'dist/index.esnext.mjs',
-      format: 'esm',
-      sourcemap: true,
-    },
-    // ES Module, transpiled to ES5
-    {
-      file: 'dist/index.mjs',
-      format: 'esm',
-      sourcemap: true,
-      plugins: [
-        getBabelOutputPlugin({
-          presets: [['@babel/preset-env', { modules: false }]],
-        }),
-      ],
-    },
-    // UMD, transpiled to ES5
-    {
-      file: 'dist/index.js',
-      format: 'esm',
-      sourcemap: true,
-      plugins: [
-        getBabelOutputPlugin({
-          moduleId: 'JsBridge',
-          presets: [['@babel/preset-env', { modules: 'umd' }]],
-        }),
-      ],
-    },
-  ]),
-  plugins: [
-    typescript({ target: 'esnext', module: 'esnext', declaration: false }),
-  ],
-  external: ['@source-health/js-bridge'],
-}
+export default [
+  {
+    input: 'src/index.ts',
+    output: applyTerser([
+      // ES Module, straight TS to JS compilation
+      {
+        file: 'dist/index.esnext.mjs',
+        format: 'esm',
+        sourcemap: true,
+      },
+      // ES Module, transpiled to ES5
+      {
+        file: 'dist/index.mjs',
+        format: 'esm',
+        sourcemap: true,
+        plugins: [
+          getBabelOutputPlugin({
+            presets: [['@babel/preset-env', { modules: false }]],
+          }),
+        ],
+      },
+      // UMD, transpiled to ES5
+      {
+        file: 'dist/index.js',
+        format: 'esm',
+        sourcemap: true,
+        plugins: [
+          getBabelOutputPlugin({
+            moduleId: 'SourceJs',
+            presets: [['@babel/preset-env', { modules: 'umd' }]],
+          }),
+        ],
+      },
+    ]),
+    plugins: [
+      typescript({ target: 'esnext', module: 'esnext', declaration: false }),
+    ],
+    external: ['@source-health/js-bridge'],
+  },
+  {
+    input: 'src/server.ts',
+    output: [
+      {
+        file: 'dist/server.mjs',
+        format: 'esm',
+        sourcemap: true,
+      },
+      {
+        file: 'dist/server.js',
+        format: 'esm',
+        sourcemap: true,
+        plugins: [
+          getBabelOutputPlugin({
+            moduleId: 'SourceJs',
+            presets: [['@babel/preset-env', { modules: 'umd' }]],
+          }),
+        ],
+      },
+    ],
+    plugins: [
+      typescript({ target: 'esnext', module: 'esnext', declaration: false }),
+    ],
+  },
+]

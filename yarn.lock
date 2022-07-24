@@ -3568,6 +3568,13 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@source-health/js@^1.0.0-alpha.0":
+  version "1.0.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@source-health/js/-/js-1.0.0-alpha.0.tgz#165b062d6efee33b8a85261ba1ea703260b3550b"
+  integrity sha512-V5AJy/GY2HrkYj2uveFzW0H5ir+O0gUAy4tR20CbVgmOzf3frOIrnc1VdyZJwYs6jwm5pkedfYP/O2rS/m9EOA==
+  dependencies:
+    "@source-health/js-bridge" "^1.0.0-alpha.0"
+
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@szmarczak/http-timer/-/http-timer-1.1.2.tgz#b1665e2c461a2cd92f4c1bbf50d5454de0d4b421"

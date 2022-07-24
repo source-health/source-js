@@ -1,11 +1,15 @@
 import { Button, ChakraProvider, Stack } from '@chakra-ui/react'
-import type { BookingElement } from '@source-health/js'
-import { NoopAuthentication, Source } from '@source-health/js'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import type { BookingElement } from '@source-health/source-js'
+import { Source, TokenProvider } from '@source-health/source-js'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 const source = new Source({
   domain: 'http://localhost:3002',
-  authentication: new NoopAuthentication(),
+  authentication: new TokenProvider(() =>
+    fetch('/api/source-token')
+      .then((res) => res.json())
+      .then((res) => res.token),
+  ),
   appearance: {
     variables: {
       colorSurface: '#f9f7fa',
