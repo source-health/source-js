@@ -1,7 +1,6 @@
 import { BaseEmitter } from '@source-health/js-bridge'
 
 import type { Authentication } from './authentication/Authentication'
-import type { SourceEnvironment } from './environment'
 import type { Appearance } from './types'
 
 export interface SourceConfigurationOptions {

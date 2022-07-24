@@ -2,25 +2,30 @@
   "name": "@source-health/js-bridge",
   "version": "0.2.1",
   "license": "MIT",
-  "main": "src/index.ts",
-  "module": "src/index.ts",
-  "types": "build/esm/index.d.ts",
   "description": "Zero-dependency typescript library for cross-frame communication",
   "private": false,
+  "main": "./dist/index.js",
+  "exports": {
+    "import": "./dist/index.esnext.mjs",
+    "require": "./dist/index.js"
+  },
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
   "scripts": {
-    "build:esm": "tsc --project tsconfig.json",
-    "build:cjs": "tsc --project tsconfig.cjs.json",
-    "build": "yarn build:esm && yarn build:cjs",
+    "build:bundle": "rollup -c rollup.config.js",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build": "yarn build:types && yarn build:bundle",
     "check:lint": "eslint src/",
     "test": "jest"
   },
   "files": [
-    "build/**/*.js",
-    "build/**/*.js.map",
-    "build/**/*.d.ts"
+    "dist"
   ],
   "dependencies": {},
   "devDependencies": {
+    "@babel/preset-env": "^7.18.9",
+    "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-typescript": "^8.3.2",
     "@types/jest": "^28.1.6",
     "@types/jsdom": "^20.0.0",
