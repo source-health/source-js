@@ -1,13 +1,11 @@
 import { Button, ChakraProvider, Stack } from '@chakra-ui/react'
 import type { BookingElement } from '@source-health/js'
-import { Source, StaticAuthentication } from '@source-health/js'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { NoopAuthentication, Source } from '@source-health/js'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const source = new Source({
   domain: 'http://localhost:3002',
-  authentication: new StaticAuthentication(
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImtleV80YW1nZGxERHhLNjBHdHMwcHBIQiJ9.eyJzdWIiOiJtZW1fMW94anA0WElVcFQ1akxMUFRQalQiLCJpYXQiOjE2NTg2MDQ3OTEsImV4cCI6MTY1ODY5MTA0NSwic2NvcGVzIjpbXX0.lXvjGAELYx-vXQvPUkvCZ9KyXJBNaqdeMd_ScIsPtUA',
-  ),
+  authentication: new NoopAuthentication(),
   appearance: {
     variables: {
       colorSurface: '#f9f7fa',
@@ -31,10 +29,6 @@ export default function Home() {
     sourceEl.mount(containerRef.current)
     sourceEl.on('ready', () => {
       console.log('element is ready')
-    })
-
-    sourceEl.on('booked', (evt) => {
-      console.log(evt)
     })
 
     setElement(sourceEl)

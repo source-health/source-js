@@ -6,7 +6,14 @@
     "examples/*",
     "packages/*"
   ],
-  "scripts": {},
+  "scripts": {
+    "bootstrap": "lerna bootstrap --use-workspaces && yarn hooks:install",
+    "build": "lerna run --stream build",
+    "clean": "lerna run clean && lerna clean -y",
+    "test": "lerna run test",
+    "watch": "lerna run watch --parallel --concurrency 999",
+    "dev": "lerna run dev"
+  },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
@@ -19,6 +26,8 @@
     "typescript": "^4.6.4"
   },
   "devDependencies": {
-    "eslint-config-prettier": "^8.5.0"
+    "eslint-config-prettier": "^8.5.0",
+    "lerna": "^5.2.0",
+    "lerna-changelog": "^2.2.0"
   }
 }
