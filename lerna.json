@@ -1,17 +1,11 @@
 {
-  "command": {
-    "publish": {
-      "allowBranch": "main",
-      "bump": "patch",
-      "conventialCommits": true,
-      "message": "chore(release): Publish"
-    }
-  },
-  "packages": [ "packages/*" ],
-  "loglevel": "success",
-  "version": "independent",
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "useNx": true,
   "useWorkspaces": true,
-  "registry": "https://registry.npmjs.org",
+  "version": "0.1.0",
+  "packages": [
+    "packages/*"
+  ],
   "npmClient": "yarn",
   "ignoreChanges": [
     "CHANGELOG.md",
