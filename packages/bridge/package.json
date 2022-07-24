@@ -40,5 +40,9 @@
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
-  "gitHead": "abe472f6a1dcdbfa6e06b3d4b38b8c524854e9cc"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "gitHead": "8e23cc3b35e4f4c0c27bd87b7717cdee65506b1c"
 }
