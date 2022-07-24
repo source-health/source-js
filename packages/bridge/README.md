@@ -16,7 +16,7 @@ The first step of using the Bridge is to declare a channel that identifies the t
 
 Then, you can initialize the host:
 
-```
+```typescript
 import { Bridge, WindowChannel } from '@source-health/js-bridge'
 
 const channel = new WindowChannel({
@@ -34,7 +34,7 @@ host.connect().then(() => {
 
 And initialize the guest:
 
-```
+```typescript
 import { Bridge, WindowChannel } from '@source-health/js-bridge'
 
 const channel = new WindowChannel({
@@ -58,13 +58,13 @@ Events are fire-and-forget notifications that can be broadcast from one side of 
 
 On the host:
 
-```
+```typescript
 bridge.on('someEvent', (data) => console.log(Data))
 ```
 
 On the guest:
 
-```
+```typescript
 bridge.broadcast('someEvent', { key: 'value' })
 ```
 
@@ -76,7 +76,7 @@ Methods are bidirectional request/response call pairs. Calling methods can accep
 
 On the host:
 
-```
+```typescript
 const bridge = Bridge.host(channel, {
   methods: {
     token: () => 'VerySecureValue'
@@ -86,7 +86,7 @@ const bridge = Bridge.host(channel, {
 
 On the guest:
 
-```
+```typescript
 const guest = Bridge.guest(channel)
 const token = await guest.call('token')
 

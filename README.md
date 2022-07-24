@@ -12,7 +12,7 @@ This is a module for embedding Source-powered workflows into your patient experi
 
 Using Source.js is simple. You simply need to initialize the class with an authentication source, and then begin creating elements.
 
-```
+```typescript
 const source = new Source({
   authentication: new StaticAuthentication('your member token')
 })

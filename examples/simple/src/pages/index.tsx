@@ -5,7 +5,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 const source = new Source({
   domain: 'http://localhost:3002',
-  authentication: new StaticAuthentication(''),
+  authentication: new StaticAuthentication(
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImtleV80YW1nZGxERHhLNjBHdHMwcHBIQiJ9.eyJzdWIiOiJtZW1fMW94anA0WElVcFQ1akxMUFRQalQiLCJpYXQiOjE2NTg2MDQ3OTEsImV4cCI6MTY1ODY5MTA0NSwic2NvcGVzIjpbXX0.lXvjGAELYx-vXQvPUkvCZ9KyXJBNaqdeMd_ScIsPtUA',
+  ),
   appearance: {
     variables: {
       colorSurface: '#f9f7fa',
