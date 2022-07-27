@@ -1,7 +1,19 @@
-import { Button, ChakraProvider, Stack } from '@chakra-ui/react'
-import type { BookingElement } from '@source-health/source-js'
+import React, { ChakraProvider } from '@chakra-ui/react'
 import { Source, TokenProvider } from '@source-health/source-js'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import type { Appearance } from '@source-health/source-js/dist/types'
+import { useEffect, useRef } from 'react'
+
+const themes: Record<string, Appearance['variables']> = {
+  default: {
+    colorSurface: '#f7f9fb',
+    colorPrimary: '#4E46DC',
+  },
+  flat: {
+    colorSurface: '#fff',
+    colorPrimary: '#000',
+    borderRadius: '0px',
+  },
+}
 
 const source = new Source({
   domain: 'http://localhost:3002',
@@ -11,15 +23,11 @@ const source = new Source({
       .then((res) => res.token),
   ),
   appearance: {
-    variables: {
-      colorSurface: '#f9f7fa',
-      colorPrimary: 'green',
-    },
+    variables: themes.default,
   },
 })
 
 export default function Home() {
-  const [element, setElement] = useState<BookingElement | null>(null)
   const containerRef = useRef(null)
 
   useEffect(() => {
@@ -27,7 +35,7 @@ export default function Home() {
       return
     }
 
-    const sourceEl = source.element('booking', {
+    const sourceEl = source.element('scheduler', {
       appointmentType: 'intake_consult',
     })
     sourceEl.mount(containerRef.current)
@@ -35,48 +43,30 @@ export default function Home() {
       console.log('element is ready')
     })
 
-    setElement(sourceEl)
-
-    return () => sourceEl.unmount()
-  }, [])
-
-  const updateOptions = useCallback(
-    (appointmentType: string) => {
-      element?.update({
-        appointmentType,
-      })
-    },
-    [element],
-  )
-
-  const updateAppearance = useCallback((primaryColor: string) => {
-    source.update({
-      appearance: {
-        variables: {
-          colorPrimary: primaryColor,
-        },
-      },
+    sourceEl.on('booked', (appt) => {
+      console.log(appt)
     })
+
+    const timer = setTimeout(() => {
+      source.update({
+        appearance: {
+          variables: {
+            colorSurface: '#fff',
+            colorPrimary: '#4E46DC',
+            borderRadius: '0px',
+          },
+        },
+      })
+    }, 5000)
+
+    return () => {
+      sourceEl.unmount()
+      clearInterval(timer)
+    }
   }, [])
 
   return (
     <ChakraProvider>
-      <Stack>
-        <Stack direction="row" flex="1" spacing={2} alignItems="center">
-          <Button onClick={() => updateOptions('intake_consult')}>
-            Intake Visit
-          </Button>
-          <Button onClick={() => updateOptions('check_in_visit')}>
-            Check In Visit
-          </Button>
-        </Stack>
-        <Stack direction="row" flex="1" spacing={2} alignItems="center">
-          <Button onClick={() => updateAppearance('black')}>Black</Button>
-          <Button onClick={() => updateAppearance('green')}>Green</Button>
-        </Stack>
-      </Stack>
-      <br />
-      <br />
       <div ref={containerRef} />
     </ChakraProvider>
   )

@@ -80,7 +80,7 @@ export class SourceElement<
    */
   public mount(container: HTMLElement | string): void {
     if (this.status !== MountStatus.Unmounted) {
-      throw new Error('Element is already mounted')
+      return
     }
 
     const node = selectorToNode(container)
@@ -116,20 +116,30 @@ export class SourceElement<
     // handshake process
     this.bridge = Bridge.host(channel, {
       methods: {
-        appearance: () => this.source.getAppearance(),
         token: () => this.source.getToken(),
-        options: () => this.options,
-        updateFrameStyle: (dimensions: Partial<DOMRect>) => {
-          if (dimensions.height) {
-            frame.style.height = `${dimensions.height}px`
-          }
-        },
       },
     })
 
     this.bridge.connect()
     this.bridge.on('connected', () => {
       this.status = MountStatus.Mounted
+      this.bridge?.call('initialize', {
+        protocol: 'element',
+        elementType: this.configuration.element,
+        authentication: {
+          type: 'dynamic',
+        },
+        environment: {
+          appearance: this.source.getAppearance(),
+        },
+        options: this.options,
+      })
+    })
+
+    this.bridge.on('resize', (dimensions: Partial<DOMRect>) => {
+      if (dimensions.height) {
+        frame.style.height = `${dimensions.height}px`
+      }
     })
 
     this.source.on('updated', this.handleSourceUpdate)
@@ -148,6 +158,7 @@ export class SourceElement<
     this.frameEl?.parentNode?.removeChild(this.frameEl)
     this.frameEl = null
     this.status = MountStatus.Unmounted
+    this.source.off('updated', this.handleSourceUpdate)
   }
 
   /**
@@ -160,7 +171,7 @@ export class SourceElement<
    */
   public update(options: TOptions): void {
     this.options = options
-    this.bridge?.broadcast('updatedOptions', options)
+    this.bridge?.call('updateOptions', options)
   }
 
   /**
@@ -225,7 +236,7 @@ export class SourceElement<
   private handleSourceUpdate = (
     config: Pick<SourceConfigurationOptions, 'appearance'>,
   ) => {
-    this.bridge?.broadcast('updatedConfig', {
+    this.bridge?.call('updateEnvironment', {
       appearance: config.appearance,
     })
   }
