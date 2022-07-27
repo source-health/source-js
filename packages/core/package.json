@@ -1,6 +1,6 @@
 {
   "name": "@source-health/source-js",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-beta.0",
   "license": "MIT",
   "description": "TypeScript SDK for building modern, Source-powered patient experiences",
   "private": false,
