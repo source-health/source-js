@@ -1,6 +1,8 @@
 import type { SourceConfigurationOptions } from './SourceConfiguration'
 import { SourceConfiguration } from './SourceConfiguration'
 import { NoopAuthentication } from './authentication/NoopAuthentication'
+import type { FormOptions } from './elements/FormElement'
+import { FormElement } from './elements/FormElement'
 import type { SchedulerOptions } from './elements/SchedulerElement'
 import { SchedulerElement } from './elements/SchedulerElement'
 import type { SourceElement } from './elements/SourceElement'
@@ -33,14 +35,18 @@ export class Source {
    * @param options the options for the created element
    */
   public element(type: 'scheduler', options: SchedulerOptions): SchedulerElement
-  public element(type: 'scheduler', options: unknown): SourceElement {
-    if (type === 'scheduler') {
-      return new SchedulerElement(
-        this.configuration,
-        options as SchedulerOptions,
-      )
-    } else {
-      throw new Error(`Unrecognized element type: ${type}`)
+  public element(type: 'form', options: FormOptions): FormElement
+  public element(type: string, options: unknown): SourceElement {
+    switch (type) {
+      case 'scheduler':
+        return new SchedulerElement(
+          this.configuration,
+          options as SchedulerOptions,
+        )
+      case 'form':
+        return new FormElement(this.configuration, options as FormOptions)
+      default:
+        throw new Error(`Unrecognized element type: ${type}`)
     }
   }
 
