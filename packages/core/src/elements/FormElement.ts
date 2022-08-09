@@ -7,14 +7,19 @@ export interface FormEvents extends BaseElementEvents {
   /**
    * Fired when a form response is submitted
    */
-  submitted: { id: string }
+  submitted: {
+    exitScreen: {
+      key: string
+    }
+    values: Record<string, unknown>
+  }
 }
 
 export interface FormOptions {
   /**
    * Provide a formId (or key) into the frame
    */
-  formId: string
+  form: string
 }
 
 export class FormElement extends SourceElement<FormOptions, FormEvents> {

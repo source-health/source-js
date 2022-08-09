@@ -30,7 +30,7 @@ const source = new Source({
 
 export default function FormPage() {
   const router = useRouter()
-  const formId = router.query.formId as string
+  const form = router.query.formId as string
   const containerRef = useRef(null)
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function FormPage() {
     }
 
     const sourceEl = source.element('form', {
-      formId,
+      form,
     })
     sourceEl.mount(containerRef.current)
     sourceEl.on('ready', () => {
@@ -66,7 +66,7 @@ export default function FormPage() {
       sourceEl.unmount()
       clearInterval(timer)
     }
-  }, [formId])
+  }, [form])
 
   return (
     <ChakraProvider>
