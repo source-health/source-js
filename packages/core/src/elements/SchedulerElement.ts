@@ -15,6 +15,16 @@ export interface SchedulerOptions {
    * Provide an appointment type into the frame
    */
   appointmentType: string
+
+  /**
+   * Provide the appointment that is being rescheduled
+   */
+  reschedulingAppointment?: string | null
+
+  /**
+   * Specify whether or not to show the reasonForVisitInput (default: true)
+   */
+  reasonForVisitInput?: boolean
 }
 
 export class SchedulerElement extends SourceElement<
