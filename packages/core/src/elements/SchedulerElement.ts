@@ -24,7 +24,7 @@ export interface SchedulerOptions {
   /**
    * Specify whether or not to show the reasonForVisitInput (default: true)
    */
-  reasonForVisitInput?: boolean
+  hideReasonForVisitInput?: boolean
 }
 
 export class SchedulerElement extends SourceElement<
