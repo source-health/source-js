@@ -22,7 +22,7 @@ export interface SchedulerOptions {
   reschedulingAppointment?: string | null
 
   /**
-   * Specify whether or not to show the reasonForVisitInput (default: true)
+   * Specify whether or not to hide the reason for visit input (default: false)
    */
   hideReasonForVisitInput?: boolean
 }
