@@ -1,6 +1,6 @@
 {
   "name": "@source-health/source-js",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.4",
   "license": "MIT",
   "description": "TypeScript SDK for building modern, Source-powered patient experiences",
   "private": false,
@@ -26,9 +26,11 @@
     "generate:queries": "graphql-codegen --config codegen.yml"
   },
   "files": [
-    "build/**/*.js",
-    "build/**/*.js.map",
-    "build/**/*.d.ts"
+    "dist/**/*.js",
+    "dist/**/*.js.map",
+    "dist/**/*.mjs",
+    "dist/**/*.mjs.map",
+    "dist/**/*.d.ts"
   ],
   "dependencies": {
     "@source-health/js-bridge": "^1.0.0-alpha.0"
@@ -45,6 +47,5 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
-  },
-  "gitHead": "8e23cc3b35e4f4c0c27bd87b7717cdee65506b1c"
+  }
 }
