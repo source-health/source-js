@@ -26,11 +26,11 @@
     "generate:queries": "graphql-codegen --config codegen.yml"
   },
   "files": [
-    "build/**/*.js",
-    "build/**/*.js.map",
-    "build/**/*.mjs",
-    "build/**/*.mjs.map",
-    "build/**/*.d.ts"
+    "dist/**/*.js",
+    "dist/**/*.js.map",
+    "dist/**/*.mjs",
+    "dist/**/*.mjs.map",
+    "dist/**/*.d.ts"
   ],
   "dependencies": {
     "@source-health/js-bridge": "^1.0.0-alpha.0"
