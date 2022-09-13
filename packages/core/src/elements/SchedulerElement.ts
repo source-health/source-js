@@ -8,6 +8,13 @@ export interface SchedulerEvents extends BaseElementEvents {
    * Fired when a new appointment is booked
    */
   booked: { id: string }
+
+  error: {
+    fatal: boolean
+    step: string
+    type: string
+    message?: string
+  }
 }
 
 export interface SchedulerOptions {

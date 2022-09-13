@@ -11,7 +11,7 @@ export interface BaseElementEvents {
   /**
    * Dispatched when an error is encountered
    */
-  error: Error
+  error: Error | any
 }
 
 /**
