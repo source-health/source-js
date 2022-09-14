@@ -9,10 +9,28 @@ export interface SchedulerEvents extends BaseElementEvents {
    */
   booked: { id: string }
 
+  /**
+   * Fired when the scheduler encounters an error
+   */
   error: {
+    /**
+     * Whether the error was recoverable
+     */
     fatal: boolean
+
+    /**
+     * Step the user was at in the scheduler when the error occurred
+     */
     step: string
+
+    /**
+     * Type of error
+     */
     type: string
+
+    /**
+     * Human readable meessage describing the error
+     */
     message: string
   }
 }
