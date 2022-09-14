@@ -11,7 +11,11 @@ export interface BaseElementEvents {
   /**
    * Dispatched when an error is encountered
    */
-  error: Error | any
+  error: Error | ErrorLike
+}
+
+export interface ErrorLike {
+  message: string
 }
 
 /**

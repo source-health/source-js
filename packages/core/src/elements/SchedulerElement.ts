@@ -13,7 +13,7 @@ export interface SchedulerEvents extends BaseElementEvents {
     fatal: boolean
     step: string
     type: string
-    message?: string
+    message: string
   }
 }
 
