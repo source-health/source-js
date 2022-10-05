@@ -20,6 +20,11 @@ export interface FormOptions {
    * Provide a formId (or key) into the frame
    */
   form: string
+
+  /**
+   * Provide whether the form is in preview mode into the frame
+   */
+  preview?: boolean
 }
 
 export class FormElement extends SourceElement<FormOptions, FormEvents> {
