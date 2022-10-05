@@ -22,7 +22,10 @@ export interface FormOptions {
   form: string
 
   /**
-   * Provide whether the form is in preview mode into the frame
+   * Whether to render the form in preview mode. When running in preview mode, forms will
+   * render the latest saved version, not necessarily the last published version. Additionally,
+   * when running in preview mode, form flows will process as usual but responses will not be
+   * submitted.
    */
   preview?: boolean
 }
