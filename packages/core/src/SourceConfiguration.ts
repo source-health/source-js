@@ -1,6 +1,9 @@
 import { BaseEmitter } from '@source-health/js-bridge'
 
-import type { Authentication } from './authentication/Authentication'
+import type {
+  Authentication,
+  AuthenticationToken,
+} from './authentication/Authentication'
 import type { Appearance } from './types'
 
 export interface SourceConfigurationOptions {
@@ -56,7 +59,7 @@ export class SourceConfiguration extends BaseEmitter<SourceConfigurationEvents> 
     return this.options.appearance ?? {}
   }
 
-  public getToken(): Promise<string | null> {
+  public getToken(): Promise<AuthenticationToken | string | null> {
     return this.options.authentication.token()
   }
 }
