@@ -41,5 +41,10 @@
     "next-plugin-transpile-modules": "^2.0.0",
     "next-transpile-modules": "^9.0.0",
     "postcss": "^8.4.14"
-  }
+  },
+  "repository": {
+
+  },
+  "homepage": "",
+  
 }
